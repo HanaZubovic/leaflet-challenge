@@ -21,8 +21,6 @@ async function main() {
         depth > 10   ? '#91cf60':
                        '#1a9850';
 }
-
-    
     // An array that will store the created earthquakeMarkers
     let earthquakeMarkers = [];
 
@@ -92,7 +90,7 @@ async function main() {
     legend.onAdd = function(myMap) {
 
         var div = L.DomUtil.create('div', 'info legend'),
-        depths = [-10, 10, 20, 50, 70, 90, +90],
+        depths = [-10, 10, 20, 50, 70, +90],
         title = ['<h1>Depth of Earthquakes</h1>'];
    
     // Loop through our density intervals and generate a label with a colored square for each interval
