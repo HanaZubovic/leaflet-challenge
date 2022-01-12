@@ -1,20 +1,12 @@
 async function main() {
 
-    const url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
-
-    // Perform a GET request to the query URL/
-    const response =  await fetch(url);
+    const response =  await fetch(".\GeoJSON\PB2002_plates.json");
     const data = await response.json();
-
-    console.log(data);
-
-    let features = data.features;
-    console.log(features);
-    
+    console.log(data)
 
     // }).addTo(myMap);
     
-    // L.geoJson(data).addTo(myMap);
+    L.geoJson(data).addTo(myMap);
 
 
     // function createFeatures(features) {
@@ -70,4 +62,5 @@ async function main() {
     //             }
     // });
     // map.addLayer(geojsonLayer);
-  
+    }
+    main();
