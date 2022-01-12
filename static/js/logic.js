@@ -88,23 +88,24 @@ async function main() {
     L.control.layers(baseMap, mapsOverlay).addTo(myMap);  
 
     // Set up the legend.
-    const legend = L.control({ position: "bottomright" });
+    let legend = L.control({ position: "bottomright" });
     legend.onAdd = function(myMap) {
-        const div = L.DomUtil.create("div", "info legend");
-        const title = ['<h1>Depth of Earthquake</h1>'];
-        const labels = depths[-10, 10, 20, 50, 70, 90, +90];
+
+        var div = L.DomUtil.create('div', 'info legend'),
+        depths = [-10, 10, 20, 50, 70, 90, +90],
+        labels = [];
    
     // Loop through our density intervals and generate a label with a colored square for each interval
-    for (let i = 0; i < depth.length; i++) {
-        div.innerHTML +=
-            '<i style="background:' + getColor(depth[i] + 1) + '"></i> ' +
-            depth[i] + (depth[i + 1] ? '&ndash;' + depth[i + 1] + '<br>' : '+');
-    }
+    for (let i = 0; i < labels.length; i++) {
+            div.innerHTML +=
+            '<i style="background:' + getColor(depths[i] + 1) + '"></i> ' +
+            depths[i] + (depths[i + 1] ? '&ndash;' + depths[i + 1] + '<br>' : '+');
+        }
         return div;
     };
 
     //   Adding the legend to the map
-     legend.addTo(myMap);
+    legend.addTo(myMap);
 
                 
 };
