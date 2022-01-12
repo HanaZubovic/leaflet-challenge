@@ -93,10 +93,10 @@ async function main() {
 
         var div = L.DomUtil.create('div', 'info legend'),
         depths = [-10, 10, 20, 50, 70, 90, +90],
-        labels = [];
+        title = ['<h1>Depth of Earthquakes</h1>'];
    
     // Loop through our density intervals and generate a label with a colored square for each interval
-    for (let i = 0; i < labels.length; i++) {
+    for (let i = 0; i < depths.length; i++) {
             div.innerHTML +=
             '<i style="background:' + getColor(depths[i] + 1) + '"></i> ' +
             depths[i] + (depths[i + 1] ? '&ndash;' + depths[i + 1] + '<br>' : '+');
@@ -106,8 +106,7 @@ async function main() {
 
     //   Adding the legend to the map
     legend.addTo(myMap);
-
-                
+     
 };
 
 main();
