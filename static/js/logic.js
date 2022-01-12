@@ -91,31 +91,22 @@ async function main() {
     const legend = L.control({ position: "bottomright" });
     legend.onAdd = function(myMap) {
         const div = L.DomUtil.create("div", "info legend");
-        const title = geojson.options.limits;
-        const colors = geojson.options.colors;
-        const labels = [];
-
-        // Add the minimum and maximum.
-        const legendInfo = "<h1>Depth of Earthquake</h1>" +
-        "<div class=\"labels\">" +
-            "<div class=\"min\">" + limits[0] + "</div>" +
-            "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
-        "</div>";
-
-        div.innerHTML = legendInfo;
-
-        limits.forEach(function(limit, index) {
-        labels.push("<li style=\"background-color: " + colors[index] + "\"></li>");
-        });
-
-        div.innerHTML += "<ul>" + labels.join("") + "</ul>";
+        const title = ['<h1>Depth of Earthquake</h1>'];
+        const labels = depths[-10, 10, 20, 50, 70, 90, +90];
+   
+    // Loop through our density intervals and generate a label with a colored square for each interval
+    for (let i = 0; i < depth.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + getColor(depth[i] + 1) + '"></i> ' +
+            depth[i] + (depth[i + 1] ? '&ndash;' + depth[i + 1] + '<br>' : '+');
+    }
         return div;
     };
 
     //   Adding the legend to the map
-  legend.addTo(myMap);
+     legend.addTo(myMap);
 
                 
-}
+};
 
 main();
