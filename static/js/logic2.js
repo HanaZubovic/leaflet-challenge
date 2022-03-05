@@ -1,118 +1,72 @@
 async function main() {
-
+    // Perform a GET request to the query URL/
     const response =  await fetch("static/data/plates.json");
     const data = await response.json();
     console.log(data)
     
-    L.geoJson(data).addTo(myMap);
+   
 
-    async function main() {
+      // Creating the map object
+    const myMap = L.map("map", {
+        center: [40.09, -10.71],
+        zoom: 4
+    });
 
-        const url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
-    
-        // Perform a GET request to the query URL/
-        const response =  await fetch(url);
-        const data = await response.json();
-    
-        console.log(data);
-    
-        let features = data.features;
-        console.log(features);
-        // console.log(features.geometry.coordinates)
-    
-      // Create function to change color based on depth
-      function getColor(depth) {
-        return depth > 90 ? '#d73027' :
-            depth > 70   ? '#fc8d59' :
-            depth > 50   ? '#fee08b' :
-            depth > 20   ? '#d9ef8b' :
-            depth > 10   ? '#91cf60':
-                           '#1a9850';
-    }
-        // An array that will store the created earthquakeMarkers
-        let earthquakeMarkers = [];
-    
-        // // Loop through the json info, create a new marker, and push it to the earthquakeMarkers array
-        for (let index = 0; index < features.length; index++){ 
-        //Define variables used to get different colored markers
-            let earthquake = features[index];
-            let magnitude = earthquake.properties.mag;
-            let depth = earthquake.geometry.coordinates[2];
-            //Add marker info
-            // let earthquakeMarkers = L.marker([earthquake.geometry])
-    
-            if(earthquake){
-                earthquakeMarkers.push(
-                L.circle([earthquake.geometry.coordinates[1], earthquake.geometry.coordinates[0]], {
-                    fillOpacity: 0.75,
-                    color: getColor(depth),
-                    fillColor: getColor(depth),
-                    stroke:true,
-                    // Adjust the radius.
-                    radius: magnitude * 10000
-                // Add pop up info over markers
-                }).bindPopup("<h3>" + 'Area Hit: ' + earthquake.properties.place + + '<br>' +'<hr>'+'Magnitude: ' + magnitude  + '<br>'+ '<hr>'+ 'Time: ' + new Date(earthquake.properties.time) + "</h1>")
-                )};
-            };
-        // Add all the earthquakeMarkers to a new layer group.
-        // Now, we can handle them as one group instead of referencing each one individually.
-        let earthquakeLayer = L.layerGroup(earthquakeMarkers)
-    
-    
-        // Defining and adding the tile layers
-        let street =L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        });
-            // }).addTo(myMap);
-    
-        // Topography Layer     
-        let topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
-        });
-    
-            //Only one base layer can be shown at a time.
-        let baseMap = {
-            "Street Map": street,
-            "Topographic Map": topo
-        };
-    
-            // Overlays that can be toggled on or off.
-        let mapsOverlay = {
-            Earthquakes: earthquakeLayer, 
-        };
-    
-            // Creating the map object
-        let myMap = L.map('map', {
-            center: [40.09, -10.71],
-            zoom: 4, 
-            layers: [street, earthquakeLayer]
-        });
-                
-            // Create a layer control.
-            // Pass it our baseMaps and overlayMaps.
-            // Add the layer control to the map.
-        L.control.layers(baseMap, mapsOverlay).addTo(myMap);  
-    
-        // Set up the legend.
-        let legend = L.control({ position: "bottomright" });
-        legend.onAdd = function(myMap) {
-    
-            var div = L.DomUtil.create('div', 'info legend'),
-            depths = [-10, 10, 20, 50, 70, +90],
-            title = ['<h1>Depth of Earthquakes</h1>'];
-       
-        // Loop through our density intervals and generate a label with a colored square for each interval
-        for (let i = 0; i < depths.length; i++) {
-                div.innerHTML +=
-                '<i style="background:' + getColor(depths[i] + 1) + '"></i> ' +
-                depths[i] + (depths[i + 1] ? '&ndash;' + depths[i + 1] + '<br>' : '+');
+    // Adding the tile layer
+
+    L.geoJson(data, {
+        // Styling each feature (in this case, a neighborhood)
+        style: function(feature) {
+          return {
+            color: "white",
+            // Call the chooseColor() function to decide which color to color our neighborhood. (The color is based on the borough.)
+            fillColor: chooseColor(feature.properties.borough),
+            fillOpacity: 0.5,
+            weight: 1.5
+          };
+        },
+        // This is called on each feature.
+        onEachFeature: function(feature, layer) {
+          // Set the mouse events to change the map styling.
+          layer.on({
+            // When a user's mouse cursor touches a map feature, the mouseover event calls this function, which makes that feature's opacity change to 90% so that it stands out.
+            mouseover: function(event) {
+              layer = event.target;
+              layer.setStyle({
+                fillOpacity: 0.9
+              });
+            },
+            // When the cursor no longer hovers over a map feature (that is, when the mouseout event occurs), the feature's opacity reverts back to 50%.
+            mouseout: function(event) {
+              layer = event.target;
+              layer.setStyle({
+                fillOpacity: 0.5
+              });
+            },
+            // When a feature (neighborhood) is clicked, it enlarges to fit the screen.
+            click: function(event) {
+              myMap.fitBounds(event.target.getBounds());
             }
-            return div;
-        };
+          });
+          // Giving each feature a popup with information that's relevant to it
+          layer.bindPopup("<h1>" + feature.properties.neighborhood + "</h1> <hr> <h2>" + feature.properties.borough + "</h2>");
     
-        //   Adding the legend to the map
-        legend.addTo(myMap);
-         
+        }
+      }).addTo(myMap);
+    
+    
+    
+
+
+    // Our style object
+    const mapStyle = {
+        color: "white",
+        fillColor: "pink",
+        fillOpacity: 0.5,
+        weight: 1.5
     };
-    
-    main();
+
+
+
+};
+main()
