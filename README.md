@@ -6,6 +6,7 @@ The United States Geological Survey(USGS) is responsible for providing scientifi
 ## File Directory
 - `index.html` contains the `.html` script for our homepage
 - static folder contains our `.js`, `,css`, and our data(json) files
+- Images folder contains screenshots of dashboard and data
 
 ## Process
 - Fetched the json data from USGS site
